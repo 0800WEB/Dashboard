@@ -26,88 +26,6 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 
 export function Component() {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <header className="flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
-        <Link href="#" className="flex items-center gap-2 text-lg font-semibold" prefetch={false}>
-          <BeerIcon className="h-6 w-6" />
-          <span className="sr-only">Drink App</span>
-        </Link>
-        <nav className="hidden gap-6 text-sm font-medium md:flex">
-          <Link href="#" className="text-muted-foreground hover:text-foreground" prefetch={false}>
-            Dashboard
-          </Link>
-          <Link href="#" className="text-muted-foreground hover:text-foreground" prefetch={false}>
-            Orders
-          </Link>
-          <Link href="#" className="text-muted-foreground hover:text-foreground" prefetch={false}>
-            Products
-          </Link>
-          <Link href="#" className="text-muted-foreground hover:text-foreground" prefetch={false}>
-            Customers
-          </Link>
-          <Link href="#" className="text-muted-foreground hover:text-foreground" prefetch={false}>
-            Analytics
-          </Link>
-        </nav>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <img
-              src="/placeholder.svg"
-              width="36"
-              height="36"
-              alt="Avatar"
-              className="rounded-full"
-              style={{ aspectRatio: "36/36", objectFit: "cover" }}
-            />
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
-        </div>
-      </header>
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="border-r bg-background px-4 py-6 md:w-64">
-          <nav className="grid gap-4">
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              prefetch={false}
-            >
-              <LayoutDashboardIcon className="h-5 w-5" />
-              Dashboard
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              prefetch={false}
-            >
-              <ShoppingCartIcon className="h-5 w-5" />
-              Orders
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              prefetch={false}
-            >
-              <BeerIcon className="h-5 w-5" />
-              Products
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              prefetch={false}
-            >
-              <UsersIcon className="h-5 w-5" />
-              Customers
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              prefetch={false}
-            >
-              <LineChartIcon className="h-5 w-5" />
-              Analytics
-            </Link>
-          </nav>
-        </aside>
         <main className="flex-1 p-4 md:p-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
@@ -298,8 +216,6 @@ export function Component() {
             </Card>
           </div>
         </main>
-      </div>
-    </div>
   )
 }
 
