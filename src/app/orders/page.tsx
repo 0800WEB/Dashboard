@@ -12,7 +12,7 @@ const OrdersPage = () => {
     <main className="flex-1 p-4 md:p-6">
       <Card>
         <CardHeader className="px-6 py-4">
-          <CardTitle>Recent Orders</CardTitle>
+          <CardTitle>All Orders</CardTitle>
           <CardDescription>
             A list of the most recent orders placed on your store.
           </CardDescription>

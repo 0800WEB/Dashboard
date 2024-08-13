@@ -208,7 +208,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className + " min-h-screen flex flex-col"}>
         <header className="flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
           <Link
             href="#"
@@ -247,13 +247,6 @@ export default function RootLayout({
             >
               Customers
             </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-foreground"
-              prefetch={false}
-            >
-              Analytics
-            </Link>
           </nav>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="rounded-full">
@@ -269,7 +262,7 @@ export default function RootLayout({
             </Button>
           </div>
         </header>
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden h-full">
           <aside className="border-r bg-background px-4 py-6 md:w-64">
             <nav className="grid gap-4">
               <Link
