@@ -2,10 +2,12 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+/* import 'primereact/resources/themes/saga-blue/theme.css';  // Tema
+import 'primereact/resources/primereact.min.css';           // Componentes de PrimeReact
+import 'primeicons/primeicons.css';       */                   // Iconos de PrimeReact
 
 const HomePage = () => {
   const router = useRouter();
-
   useEffect(() => {
     const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
 

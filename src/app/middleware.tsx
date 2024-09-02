@@ -16,6 +16,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/signin', request.url));
   }
 
+  if (!token && pathname == '/dashboard') {
+    // Si el usuario no está autenticado, redirigir a /signin
+    return NextResponse.redirect(new URL('/signin', request.url));
+  }
+
   return NextResponse.next();
 }
 

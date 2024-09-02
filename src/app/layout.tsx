@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
+import 'primereact/resources/themes/saga-blue/theme.css';  // Tema
+import 'primereact/resources/primereact.min.css';           // Componentes de PrimeReact
+import 'primeicons/primeicons.css';                         // Iconos de PrimeReact
 
 export const metadata: Metadata = {
   title: "Create Next App",

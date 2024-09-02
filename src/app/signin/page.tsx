@@ -23,13 +23,13 @@ const SignInPage = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    console.log(email, password)
+    console.log(email, password);
     try {
       const response = await axios.post("http://localhost:3000/users/signin", {
         email,
         password,
       });
-      console.log(response)
+      console.log(response);
       if (response.data.success) {
         // Guarda el token en cookies/localStorage (según tu preferencia)
         document.cookie = `token=${response.data.token}; path=/;`;
@@ -66,7 +66,7 @@ const SignInPage = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="tucorreo@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

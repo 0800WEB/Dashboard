@@ -1,347 +1,383 @@
 "use client";
-import Cookies from "js-cookie";
-import axios from "axios";
+
 import React, { useState, useEffect } from "react";
+import {
+  Bell,
+  Coffee,
+  Eye,
+  Gift,
+  Home,
+  Package,
+  Search,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import axios from "axios";
+import { SERVER_URI, _retrieveData } from "@/lib/utils";
+import { useToast } from '../ToastContext';
 
-export default function Component() {
-  let [totalCustomers, setTotalCustomers] = useState(0);
-  let [recentOrders, setRecentOrders] = useState([]); // Estado para almacenar las órdenes recientes
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      console.error("No token found");
-      return;
+// Definición de tipos para los objetos que maneja el componente
+interface Product {
+  product: {
+    name: string;
+  };
+  quantity: number;
+}
+
+interface Order {
+  _id: string;
+  user: {
+    name: string;
+  };
+  products: Product[];
+  totalPrice: number;
+  status: keyof typeof statusColors;
+  createdAt: string;
+  deliveryAddress: string;
+}
+
+interface DashboardStats {
+  totalOrders: number;
+  totalCoupons: number;
+  totalCustomers: number;
+  totalRevenue: number;
+}
+
+const statusColors = {
+  pendiente: "bg-gray-200 text-gray-800",
+  "en preparación": "bg-yellow-200 text-yellow-800",
+  "en camino": "bg-blue-200 text-blue-800",
+  cancelado: "bg-red-200 text-red-800",
+  entregado: "bg-green-200 text-green-800",
+};
+
+export default function Dashboard() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [totalCoupons, setTotalCoupons] = useState<number>(0);
+  const [totalOrders, setTotalOrders] = useState<number>(0);
+  const [totalCustomers, setTotalCustomers] = useState<number>(0);
+  const [totalRevenue, setTotalRevenue] = useState<number>(0);
+  const toast = useToast();
+
+  const showSuccess = (message: string) => {
+    toast.current?.show({
+      severity: "success",
+      summary: "Éxito",
+      detail: message,
+      life: 3000,
+    });
+  };
+
+  const showError = (message: string) => {
+    toast.current?.show({
+      severity: "error",
+      summary: "Error",
+      detail: message,
+      life: 3000,
+    });
+  };
+
+  const fetchTotalCoupons = async () => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      const response = await axios.get(`${SERVER_URI}/coupons/total-coupons`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTotalCoupons(response.data);
+    } catch (error) {
+      console.error("Error al obtener el total de cupones:", error);
+      showError("Error al obtener el total de cupones");
     }
+  };
 
-    const fetchTotalCustomers = async () => {
-      try {
-        let { data } = await axios.get(
-          "http://localhost:3000/users/total-customers",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setTotalCustomers(data.totalCustomers);
-      } catch (error) {
-        console.error("Error fetching total customers:", error);
-        setTotalCustomers("N/A");
-      }
-    };
-    const fetchRecentOrders = async () => {
-      try {
-        let { data } = await axios.get(
-          "http://localhost:3000/orders/last-orders",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setRecentOrders(data.orders); // Guardamos las órdenes en el estado
-      } catch (error) {
-        console.error("Error fetching recent orders:", error);
-      }
-    };
+  const fetchTotalOrders = async () => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      const response = await axios.get(`${SERVER_URI}/orders/total-orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTotalOrders(response.data);
+    } catch (error) {
+      console.error("Error al obtener el total de órdenes:", error);
+      showError("Error al obtener el total de órdenes");
+    }
+  };
 
+  const fetchTotalCustomers = async () => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      const response = await axios.get(`${SERVER_URI}/users/total-customers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTotalCustomers(response.data);
+    } catch (error) {
+      console.error("Error al obtener el total de clientes:", error);
+      showError("Error al obtener el total de clientes");
+    }
+  };
+
+  const fetchTotalRevenue = async () => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      const response = await axios.get(`${SERVER_URI}/orders/total-revenue`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTotalRevenue(response.data);
+    } catch (error) {
+      console.error("Error al obtener los ingresos totales:", error);
+      showError("Error al obtener los ingresos totales");
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      const response = await axios.get(`${SERVER_URI}/orders/last-orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.success) {
+        setOrders(response.data.orders);
+      }
+    } catch (error) {
+      console.error("Error al obtener las órdenes recientes:", error);
+      showError("Error al obtener las órdenes recientes");
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+    fetchTotalCoupons();
+    fetchTotalOrders();
     fetchTotalCustomers();
-    fetchRecentOrders(); // Llamamos a la función para obtener las órdenes recientes
+    fetchTotalRevenue();
   }, []);
 
+  const handleStatusChange = async (orderId: string, newStatus: Order["status"]) => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      await axios.patch(
+        `${SERVER_URI}/orders/${orderId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      showSuccess(`El estado de la orden se actualizó a ${newStatus}`);
+    } catch (err) {
+      console.error("Error al actualizar el estado de la orden:", err);
+      showError("Error al actualizar el estado de la orden");
+    }
+  };
+
   return (
-    <main className="flex-1 p-4 md:p-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-            <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCartIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12,234</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Customers
-            </CardTitle>
-            <UsersIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {totalCustomers ? totalCustomers : "N/A"}
-            </div>
-          </CardContent>
-        </Card>
+    <main className="w-full p-8 flex flex-col">
+      {/* Encabezado */}
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Tablero</h1>
+          <p className="text-gray-600">Bienvenido de nuevo, Admin</p>
+        </div>
+      </header>
+      {/* Cuadrícula del Tablero */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          {
+            title: "Órdenes Totales",
+            value: totalOrders,
+            icon: ShoppingCart,
+            color: "bg-blue-500",
+          },
+          {
+            title: "Clientes Activos",
+            value: totalCustomers,
+            icon: Users,
+            color: "bg-green-500",
+          },
+          {
+            title: "Cupones Totales",
+            value: totalCoupons,
+            icon: Gift,
+            color: "bg-yellow-500",
+          },
+          {
+            title: "Ingresos",
+            value: totalRevenue.toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            }),
+            icon: Coffee,
+            color: "bg-purple-500",
+          },
+        ].map((item, index) => (
+          <Card key={index} className="overflow-hidden">
+            <CardHeader className="border-b p-0">
+              <div className={`${item.color} p-4`}>
+                <item.icon className="h-8 w-8 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <CardTitle className="text-sm font-medium text-gray-500">
+                {item.title}
+              </CardTitle>
+              <p className="mt-2 text-2xl font-bold">{item.value}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-      <div className="mt-4">
-        <Card>
-          <CardHeader className="px-6 py-4">
-            <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>
-              A list of the most recent orders placed on your store.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>
-                    <span className="sr-only">Actions</span>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentOrders && recentOrders.map((order) => (
-                  <TableRow key={order._id}>
-                    <TableCell className="font-medium">{`#${order._id.substring(
-                      0,
-                      4
-                    )}`}</TableCell>
-                    <TableCell>{order.user.name}</TableCell>
-                    <TableCell>
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>{`$${order.totalPrice}`}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          order.status === "fulfilled" ? "success" : "secondary"
+      {/* Órdenes Recientes */}
+      <Card className="mt-8 flex-1">
+        <CardHeader>
+          <CardTitle>Órdenes Recientes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pt-6 font-medium">ID de la Orden</th>
+                  <th className="pb-3 pt-6 font-medium">Cliente</th>
+                  <th className="pb-3 pt-6 font-medium">Productos</th>
+                  <th className="pb-3 pt-6 font-medium">Total</th>
+                  <th className="pb-3 pt-6 font-medium">Fecha</th>
+                  <th className="pb-3 pt-6 font-medium">Estado</th>
+                  <th className="pb-3 pt-6 font-medium">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order._id} className="border-b">
+                    <td className="py-4">{order._id}</td>
+                    <td className="py-4">{order.user.name}</td>
+                    <td className="py-4">
+                      {order.products
+                        .map((product) => product.product.name)
+                        .join(", ")}
+                    </td>
+                    <td className="py-4">${order.totalPrice.toFixed(2)}</td>
+                    <td className="py-4">
+                      {new Date(order.createdAt).toLocaleString()}
+                    </td>
+                    <td className="py-4">
+                      <Select
+                        onValueChange={(value) =>
+                          handleStatusChange(order._id, value as Order["status"])
                         }
+                        defaultValue={order.status}
                       >
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoveHorizontalIcon className="h-4 w-4" />
-                            <span className="sr-only">Order actions</span>
+                        <SelectTrigger
+                          className={`w-[150px] ${statusColors[order.status]}`}
+                        >
+                          <SelectValue placeholder="Estado" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(statusColors).map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="py-4">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Eye className="mr-2 h-4 w-4" />
+                            Ver
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Order</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Order</DropdownMenuItem>
-                          <DropdownMenuItem>Cancel Order</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Detalles de la Orden</DialogTitle>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">ID de la Orden:</span>
+                              <span className="col-span-3">{order._id}</span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Cliente:</span>
+                              <span className="col-span-3">
+                                {order.user.name}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Productos:</span>
+                              <span className="col-span-3">
+                                {order.products
+                                  .map((product) => product.product.name)
+                                  .join(", ")}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Total:</span>
+                              <span className="col-span-3">
+                                ${order.totalPrice.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Fecha:</span>
+                              <span className="col-span-3">
+                                {new Date(order.createdAt).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Estado:</span>
+                              <span className="col-span-3">
+                                {order.status}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Dirección:</span>
+                              <span className="col-span-3">
+                                {order.deliveryAddress}
+                              </span>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </main>
-  );
-}
-
-function BeerIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17 11h1a3 3 0 0 1 0 6h-1" />
-      <path d="M9 12v6" />
-      <path d="M13 12v6" />
-      <path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5S9.44 2 11 2s2 1.5 3 1.5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z" />
-      <path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" />
-    </svg>
-  );
-}
-
-function CreditCardIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="20" height="14" x="2" y="5" rx="2" />
-      <line x1="2" x2="22" y1="10" y2="10" />
-    </svg>
-  );
-}
-
-function DollarSignIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" x2="12" y1="2" y2="22" />
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-    </svg>
-  );
-}
-
-function LayoutDashboardIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="7" height="9" x="3" y="3" rx="1" />
-      <rect width="7" height="5" x="14" y="3" rx="1" />
-      <rect width="7" height="9" x="14" y="12" rx="1" />
-      <rect width="7" height="5" x="3" y="16" rx="1" />
-    </svg>
-  );
-}
-
-function LineChartIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 3v18h18" />
-      <path d="m19 9-5 5-4-4-3 3" />
-    </svg>
-  );
-}
-
-function MoveHorizontalIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="18 8 22 12 18 16" />
-      <polyline points="6 8 2 12 6 16" />
-      <line x1="2" x2="22" y1="12" y2="12" />
-    </svg>
-  );
-}
-
-function ShoppingCartIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="8" cy="21" r="1" />
-      <circle cx="19" cy="21" r="1" />
-      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-    </svg>
-  );
-}
-
-function UsersIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
   );
 }
