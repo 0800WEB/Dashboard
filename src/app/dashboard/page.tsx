@@ -73,6 +73,7 @@ export default function Dashboard() {
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
+  
   const toast = useToast();
 
   const showSuccess = (message: string) => {
