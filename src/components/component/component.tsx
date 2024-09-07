@@ -101,7 +101,7 @@ export function Component() {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="outline" size="icon">
                               <MoveHorizontalIcon className="h-4 w-4" />
                               <span className="sr-only">Order actions</span>
                             </Button>
@@ -125,7 +125,7 @@ export function Component() {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="outline" size="icon">
                               <MoveHorizontalIcon className="h-4 w-4" />
                               <span className="sr-only">Order actions</span>
                             </Button>
@@ -149,7 +149,7 @@ export function Component() {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="outline" size="icon">
                               <MoveHorizontalIcon className="h-4 w-4" />
                               <span className="sr-only">Order actions</span>
                             </Button>
@@ -173,7 +173,7 @@ export function Component() {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="outline" size="icon">
                               <MoveHorizontalIcon className="h-4 w-4" />
                               <span className="sr-only">Order actions</span>
                             </Button>
@@ -197,7 +197,7 @@ export function Component() {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="outline" size="icon">
                               <MoveHorizontalIcon className="h-4 w-4" />
                               <span className="sr-only">Order actions</span>
                             </Button>

@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import axios from "axios";
 import { SERVER_URI } from "@/lib/utils";
@@ -68,8 +69,40 @@ const OrdersPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null); // Estado para el modal de confirmación de eliminación
   const toast = useToast();
+  
+  // Controlador para eliminar todas las órdenes
+  const handleDeleteAllOrders = async () => {
+    try {
+      const token = await _retrieveData({ key: "token" });
+      await axios.delete(`${SERVER_URI}/orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      setOrders([]);
+
+      toast.current.show({
+        severity: "success",
+        summary: "Éxito",
+        detail: "Todas las órdenes se eliminaron correctamente",
+        life: 3000,
+      });
+    } catch (err) {
+      console.error("Error al eliminar todas las órdenes:", err);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "No se pudieron eliminar todas las órdenes",
+        life: 3000,
+      });
+    } finally {
+      setIsDeleteAllModalOpen(false);
+    }
+  };
+  
   const getOrders = async (page = 1) => {
     try {
       const token = await _retrieveData({ key: "token" });
@@ -138,16 +171,19 @@ const OrdersPage: React.FC = () => {
   };
 
   // Controlador para eliminar una orden específica
-  const handleDeleteOrder = async (orderId: string) => {
+  const handleDeleteOrder = async () => {
+    if (!orderToDelete) return;
+
     try {
       const token = await _retrieveData({ key: "token" });
-      await axios.delete(`${SERVER_URI}/orders/${orderId}`, {
+      await axios.delete(`${SERVER_URI}/orders/${orderToDelete._id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderToDelete._id));
+      setOrderToDelete(null); // Cerrar el modal
 
       toast.current.show({
         severity: "success",
@@ -163,37 +199,6 @@ const OrdersPage: React.FC = () => {
         detail: "No se pudo eliminar la orden",
         life: 3000,
       });
-    }
-  };
-
-  // Controlador para eliminar todas las órdenes
-  const handleDeleteAllOrders = async () => {
-    try {
-      const token = await _retrieveData({ key: "token" });
-      await axios.delete(`${SERVER_URI}/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setOrders([]);
-
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "Todas las órdenes se eliminaron correctamente",
-        life: 3000,
-      });
-    } catch (err) {
-      console.error("Error al eliminar todas las órdenes:", err);
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudieron eliminar todas las órdenes",
-        life: 3000,
-      });
-    } finally {
-      setIsDeleteAllModalOpen(false);
     }
   };
 
@@ -237,6 +242,24 @@ const OrdersPage: React.FC = () => {
               Eliminar Todas las Órdenes
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Confirmación para Eliminar una Orden */}
+      <Dialog open={!!orderToDelete} onOpenChange={() => setOrderToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Estás seguro?</DialogTitle>
+          </DialogHeader>
+          <p>Esta acción eliminará la orden <strong>{orderToDelete?.user?.name}</strong>. No se puede deshacer.</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOrderToDelete(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteOrder}>
+              Eliminar
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -291,7 +314,7 @@ const OrdersPage: React.FC = () => {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="py-4">
+                    <td className="py-4 flex gap-4">
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button variant="outline" size="sm">
@@ -347,10 +370,11 @@ const OrdersPage: React.FC = () => {
                           </div>
                         </DialogContent>
                       </Dialog>
+
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDeleteOrder(order._id)}
+                        onClick={() => setOrderToDelete(order)} // Establecer la orden que el usuario desea eliminar
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Eliminar

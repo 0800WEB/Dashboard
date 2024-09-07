@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Bell, Coffee, Gift, Home, Package, Search, ShoppingCart, Users, Filter, Plus, Trash } from 'lucide-react';
+import { Bell, Coffee, Gift, Home, Package, Search, ShoppingCart, Users, Filter, Plus, Trash, Trash2,Edit } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -295,7 +295,7 @@ export default function Products() {
                         placeholder="URL de la imagen"
                       />
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
                         onClick={() => setNewProduct({
                           ...newProduct,
@@ -361,9 +361,14 @@ export default function Products() {
                 <TableCell>{getCategoryName(product.category)}</TableCell>
                 <TableCell>${product.price.toFixed(2)}</TableCell>
                 <TableCell>{product.stock}</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(product)}>Editar</Button>
-                  <Button variant="destructive" size="sm" className="text-red-600" onClick={() => handleDelete(product)}>Eliminar</Button>
+                <TableCell className='flex gap-4'>
+                  <Button variant="outline" size="sm" onClick={() => handleEdit(product)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Editar</Button>
+                  <Button variant="destructive" size="sm" onClick={() => handleDelete(product)}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                    Eliminar
+                    </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -444,7 +449,7 @@ export default function Products() {
                         placeholder="URL de la imagen"
                       />
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
                         onClick={() => setEditingProduct({
                           ...editingProduct,
@@ -476,7 +481,7 @@ export default function Products() {
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
               <DialogDescription>
-                ¿Estás seguro que deseas eliminar {deletingProduct.name}? Esta acción no se puede deshacer.
+                ¿Estás seguro que deseas eliminar &quot;{deletingProduct.name}&quot;? Esta acción no se puede deshacer.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

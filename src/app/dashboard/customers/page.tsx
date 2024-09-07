@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Search, Eye, Trash, UserCheck, UserX } from 'lucide-react';
+import { Search, Eye, Trash2, UserCheck, UserX } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from 'axios';
 import { SERVER_URI, _retrieveData } from "@/lib/utils";
-import { Client } from './interfaces';
 import { useToast } from '@/app/ToastContext'; // Asumiendo que tienes un ToastContext personalizado
 
 export default function Clientes() {
@@ -210,17 +209,17 @@ export default function Clientes() {
                   <TableCell>{cliente.email}</TableCell>
                   <TableCell>{cliente.role === 1 ? "Administrador" : "Cliente"}</TableCell>
                   <TableCell>{new Date(cliente.createdAt).toLocaleDateString('es-GB', { timeZone: 'UTC' })}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" onClick={() => handleVerDetalles(cliente)}>
+                  <TableCell className='flex gap-4'>
+                    <Button variant="outline" size="sm" onClick={() => handleVerDetalles(cliente)}>
                       <Eye className="mr-2 h-4 w-4" />
                       Ver
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleEliminar(cliente)}>
-                      <Trash className="mr-2 h-4 w-4" />
+                    <Button variant="destructive" size="sm" onClick={() => handleEliminar(cliente)}>
+                      <Trash2 className="mr-2 h-4 w-4" />
                       Eliminar
                     </Button>
                     <Button 
-                      variant="ghost" 
+                      variant="outline" 
                       size="sm" 
                       className={cliente.role === 1 ? "text-blue-600" : "text-green-600"}
                       onClick={() => handleToggleRole(cliente)}
@@ -252,7 +251,7 @@ export default function Clientes() {
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
               <DialogDescription>
-                ¿Estás seguro de que deseas eliminar al cliente {clienteAEliminar.name}? Esta acción no se puede deshacer.
+                ¿Estás seguro de que deseas eliminar al cliente &quot;{clienteAEliminar.name}&quot;? Esta acción no se puede deshacer.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

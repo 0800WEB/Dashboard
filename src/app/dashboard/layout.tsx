@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Inter } from "next/font/google";
 import { ToastProvider } from "../ToastContext";
+import Image from 'next/image'
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -186,7 +187,7 @@ export default function RootLayout({
               className="flex items-center gap-2 text-lg font-semibold"
               prefetch={false}
             >
-              <img src="/logo.png" className="h-8"/>
+              <Image src="/logo.png" width="90" height="20" alt="Dringo"/>
               <span className="sr-only">Drink App</span>
             </Link>
             <nav className="hidden gap-6 text-sm font-medium md:flex">

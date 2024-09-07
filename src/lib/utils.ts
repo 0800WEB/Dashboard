@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-export const SERVER_URI = process.env.SERVER_URI || "http://192.168.0.103:3000";
+export const SERVER_URI = process.env.SERVER_URI || "https://delyapp-back2.onrender.com";
 
 export const _retrieveData = ({ key }: { key: string }) => {
   try {

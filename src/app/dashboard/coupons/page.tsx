@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Plus, Edit, Trash, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
 import { SERVER_URI, _retrieveData } from "@/lib/utils";
 import { useToast } from "@/app/ToastContext";
 
@@ -338,9 +338,9 @@ const CouponsPage = () => {
                     })}
                   </TableCell>
                   <TableCell>{coupon?.usageLimit}</TableCell>
-                  <TableCell>
+                  <TableCell className='flex gap-4'>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => setEditingCoupon(coupon)}
                     >
@@ -348,12 +348,11 @@ const CouponsPage = () => {
                       Editar
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="destructive"
                       size="sm"
-                      className="text-red-600"
                       onClick={() => setDeletingCoupon(coupon)}
                     >
-                      <Trash className="mr-2 h-4 w-4" />
+                      <Trash2 className="mr-2 h-4 w-4" />
                       Eliminar
                     </Button>
                   </TableCell>
@@ -620,8 +619,8 @@ const CouponsPage = () => {
           <DialogHeader>
             <DialogTitle>Confirmar Eliminación</DialogTitle>
             <p>
-              ¿Estás seguro de que quieres eliminar el cupón "
-              {deletingCoupon?.title}"? Esta acción no se puede deshacer.
+              ¿Estás seguro de que quieres eliminar el cupón &quot;
+              {deletingCoupon?.title}&quot;? Esta acción no se puede deshacer.
             </p>
           </DialogHeader>
           <DialogFooter>
