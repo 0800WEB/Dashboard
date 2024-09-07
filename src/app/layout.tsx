@@ -5,7 +5,6 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";                                       
 import React from 'react';
 import { Metadata } from "next";
-import ConnectionStatus from '@/components/ConnectionStatus';
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -24,9 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className + " min-h-screen flex flex-col items-center justify-center bg-gray-100"} style={{backgroundColor:"#f3f4f6"}}>
-        <ConnectionStatus>
           {children}
-        </ConnectionStatus>
       </body>
     </html>
   );

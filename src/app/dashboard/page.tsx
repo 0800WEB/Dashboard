@@ -77,15 +77,18 @@ export default function Dashboard() {
   const toast = useToast();
 
   const showSuccess = (message: string) => {
-    toast.current?.show({
-      severity: "success",
-      summary: "Éxito",
-      detail: message,
-      life: 3000,
-    });
+    if(toast && toast.current){
+      toast.current?.show({
+        severity: "success",
+        summary: "Éxito",
+        detail: message,
+        life: 3000,
+      });
+    }
   };
 
   const showError = (message: string) => {
+    if(toast && toast.current){
     toast.current?.show({
       severity: "error",
       summary: "Error",
@@ -93,6 +96,7 @@ export default function Dashboard() {
       life: 3000,
     });
   };
+}
 
   const fetchTotalCoupons = async () => {
     try {

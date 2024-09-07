@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-
+import { SERVER_URI } from '@/lib/utils'
 const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +25,7 @@ const SignInPage = () => {
     setError(null);
     console.log(email, password);
     try {
-      const response = await axios.post("http://localhost:3000/users/signin", {
+      const response = await axios.post(`${SERVER_URI}/users/signin`, {
         email,
         password,
       });

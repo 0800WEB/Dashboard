@@ -83,21 +83,24 @@ const OrdersPage: React.FC = () => {
       });
 
       setOrders([]);
-
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "Todas las órdenes se eliminaron correctamente",
         life: 3000,
       });
+    }
     } catch (err) {
       console.error("Error al eliminar todas las órdenes:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudieron eliminar todas las órdenes",
         life: 3000,
       });
+    }
     } finally {
       setIsDeleteAllModalOpen(false);
     }
@@ -121,12 +124,14 @@ const OrdersPage: React.FC = () => {
       setTotalPages(Math.ceil(response.data.totalOrders / 10));
     } catch (err) {
       console.error("Error al obtener órdenes:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudo obtener las órdenes",
         life: 3000,
       });
+    }
     }
   };
 
@@ -152,21 +157,24 @@ const OrdersPage: React.FC = () => {
           order._id === orderId ? { ...order, status: newStatus } : order
         )
       );
-
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "El estado de la orden se actualizó correctamente",
         life: 3000,
       });
+    }
     } catch (err) {
       console.error("Error al actualizar el estado de la orden:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudo actualizar el estado de la orden",
         life: 3000,
       });
+    }
     }
   };
 
@@ -184,21 +192,24 @@ const OrdersPage: React.FC = () => {
 
       setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderToDelete._id));
       setOrderToDelete(null); // Cerrar el modal
-
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "La orden se eliminó correctamente",
         life: 3000,
       });
+    }
     } catch (err) {
       console.error("Error al eliminar la orden:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudo eliminar la orden",
         life: 3000,
       });
+    }
     }
   };
 
@@ -307,7 +318,7 @@ const OrdersPage: React.FC = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {Object.keys(statusColors).map((status) => (
-                            <SelectItem key={status} value={status}>
+                            <SelectItem key={status} value={status} className="bg-red-600">
                               {status}
                             </SelectItem>
                           ))}

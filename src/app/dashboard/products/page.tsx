@@ -83,22 +83,26 @@ export default function Products() {
       setProducts([...products, response.data.product]);
       setNewProduct({name: '', description: '', price: 0, category: '', stock: 0, images: [''] });
       setIsAddProductDialogOpen(false);
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "Producto agregado correctamente",
-        life: 3000,
-      });
-    } catch (error) {
+      if(toast && toast.current){
+        toast.current.show({
+          severity: "success",
+          summary: "Éxito",
+          detail: "Producto agregado correctamente",
+          life: 3000,
+        });
+      }
+    } catch (error:any) {
       console.error('Error al crear producto:', error.response.data.message);
       if(error.response.data.message){
-        error.response.data.message.forEach(data=>{
+        error.response.data.message.forEach( (data: any) =>{
+      if(toast && toast.current){
           toast.current.show({
             severity: "warn",
             summary: "Advertencia",
             detail: data.message,
             life: 3000,
           });
+      }
         })
       }
     }
@@ -119,6 +123,7 @@ export default function Products() {
         });
         setProducts(products.map(p => p._id === editingProduct._id ? response.data.product : p));
         setEditingProduct(null);
+      if(toast && toast.current){
         toast.current.show({
           severity: "success",
           summary: "Éxito",
@@ -126,16 +131,19 @@ export default function Products() {
           life: 3000,
         });
       }
-    } catch (error) {
+    }
+    } catch (error:any) {
       console.error('Error al actualizar producto:', error);
       if(error.response.data.message){
-        error.response.data.message.forEach(data=>{
+        error.response.data.message.forEach((data:any)=>{
+      if(toast && toast.current){
           toast.current.show({
             severity: "warn",
             summary: "Advertencia",
             detail: data.message,
             life: 3000,
           });
+        }
         })
       }
 
@@ -157,6 +165,7 @@ export default function Products() {
         });
         setProducts(products.filter(p => p._id !== deletingProduct._id));
         setDeletingProduct(null);
+      if(toast && toast.current){
         toast.current.show({
           severity: "success",
           summary: "Éxito",
@@ -164,14 +173,17 @@ export default function Products() {
           life: 3000,
         });
       }
+      }
     } catch (error) {
       console.error('Error al eliminar producto:', error);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudo eliminar el producto",
         life: 3000,
       });
+    }
     }
   };
 

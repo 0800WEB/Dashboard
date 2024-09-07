@@ -82,20 +82,24 @@ export default function Categories() {
       setCategories([...categories, response.data.category]);
       setNewCategory({ name: "", description: "", image: "" });
       setIsAddCategoryDialogOpen(false);
+      if (toast && toast.current) {
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "Categoría creada con éxito.",
         life: 3000,
       });
+    }
     } catch (error) {
       console.error("Error al crear la categoría:", error);
+      if (toast && toast.current) {
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudo crear la categoría. Intente nuevamente.",
         life: 3000,
       });
+    }
     }
   };
 
@@ -118,21 +122,25 @@ export default function Categories() {
           )
         );
         setEditingCategory(null);
-        toast.current.show({
-          severity: "success",
-          summary: "Éxito",
-          detail: "Categoría actualizada con éxito.",
-          life: 3000,
-        });
+        if(toast && toast.current){
+          toast.current.show({
+            severity: "success",
+            summary: "Éxito",
+            detail: "Categoría actualizada con éxito.",
+            life: 3000,
+          });
+        }
       }
     } catch (error) {
       console.error("Error al actualizar la categoría:", error);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "No se pudo actualizar la categoría. Intente nuevamente.",
         life: 3000,
       });
+    }
     }
   };
 
@@ -147,6 +155,7 @@ export default function Categories() {
         });
         setCategories(categories.filter((c) => c._id !== deletingCategory._id));
         setDeletingCategory(null);
+      if(toast && toast.current){
         toast.current.show({
           severity: "success",
           summary: "Éxito",
@@ -154,8 +163,10 @@ export default function Categories() {
           life: 3000,
         });
       }
+      }
     } catch (error) {
       console.error("Error al eliminar la categoría:", error);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -163,6 +174,7 @@ export default function Categories() {
         life: 3000,
       });
     }
+  }
   };
 
   const filteredCategories = categories.filter(

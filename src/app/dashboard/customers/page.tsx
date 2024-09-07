@@ -11,10 +11,11 @@ import { SERVER_URI, _retrieveData } from "@/lib/utils";
 import { useToast } from '@/app/ToastContext'; // Asumiendo que tienes un ToastContext personalizado
 
 export default function Clientes() {
-  const [clientes, setClientes] = useState<Client[]>([]);
+  
+  const [clientes, setClientes] = useState<any[]>([]);
   const [terminoBusqueda, setTerminoBusqueda] = useState<string>('');
-  const [clienteAEliminar, setClienteAEliminar] = useState<Client | null>(null);
-  const [clienteAVer, setClienteAVer] = useState<Client | null>(null);
+  const [clienteAEliminar, setClienteAEliminar] = useState<any | null>(null);
+  const [clienteAVer, setClienteAVer] = useState<any | null>(null);
   const [eliminandoTodos, setEliminandoTodos] = useState<boolean>(false);
   const toast = useToast(); // Usando tu hook de toast personalizado
 
@@ -22,7 +23,7 @@ export default function Clientes() {
     const obtenerClientes = async () => {
       try {
         const token = await _retrieveData({ key: "token" });
-        const response = await axios.get<{ response: Client[] }>(`${SERVER_URI}/users`, {
+        const response = await axios.get<{ response: any[] }>(`${SERVER_URI}/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -30,6 +31,7 @@ export default function Clientes() {
         setClientes(response.data.response);
       } catch (err) {
         console.log("Error obteniendo clientes:", err);
+      if(toast && toast.current){
         toast.current.show({
           severity: "error",
           summary: "Error",
@@ -37,18 +39,21 @@ export default function Clientes() {
           life: 3000,
         });
       }
+    }
     };
     obtenerClientes();
   }, []);
 
-  const handleEliminar = (cliente: Client) => {
+  const handleEliminar = (cliente: any) => {
     if (cliente.role === 1) {
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Acción Denegada",
         detail: "No puedes eliminar un administrador.",
         life: 3000,
       });
+    }
       return;
     }
     setClienteAEliminar(cliente);
@@ -66,14 +71,17 @@ export default function Clientes() {
       });
       setClientes(clientes.filter(c => c._id !== clienteAEliminar._id));
       setClienteAEliminar(null);
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: `Cliente ${clienteAEliminar.name} eliminado con éxito.`,
         life: 3000,
       });
+    }
     } catch (err) {
       console.log("Error eliminando cliente:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -81,12 +89,13 @@ export default function Clientes() {
         life: 3000,
       });
     }
+  }
   };
 
   const handleEliminarTodosLosUsuarios = async () => {
     try {
       const token = await _retrieveData({ key: "token" });
-      const usuarioActual = await axios.get<{ data: Client }>(`${SERVER_URI}/users/me`, {
+      const usuarioActual = await axios.get<{ data: any }>(`${SERVER_URI}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -100,15 +109,17 @@ export default function Clientes() {
 
       setClientes([usuarioActual.data]);
       setEliminandoTodos(false);
-
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "Todos los usuarios eliminados, excepto el administrador actual.",
         life: 3000,
       });
+    }
     } catch (err) {
       console.log("Error eliminando todos los usuarios:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -116,27 +127,30 @@ export default function Clientes() {
         life: 3000,
       });
     }
+  }
   };
 
-  const handleToggleRole = async (cliente: Client) => {
+  const handleToggleRole = async (cliente: any) => {
     try {
       const token = await _retrieveData({ key: "token" });
-      const response = await axios.post<{ user: Client }>(`${SERVER_URI}/users/${cliente._id}`, {}, {
+      const response = await axios.post<{ user: any }>(`${SERVER_URI}/users/${cliente._id}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       setClientes(clientes.map(c => c._id === cliente._id ? response.data.user : c));
-
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: `Cliente ${cliente.name} ${cliente.role === 1 ? "degradado a Cliente" : "ascendido a Administrador"}.`,
         life: 3000,
       });
+    }
     } catch (err) {
       console.log("Error cambiando rol del cliente:", err);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -144,9 +158,10 @@ export default function Clientes() {
         life: 3000,
       });
     }
+  }
   };
 
-  const handleVerDetalles = (cliente: Client) => {
+  const handleVerDetalles = (cliente: any) => {
     setClienteAVer(cliente);
   };
 

@@ -219,7 +219,7 @@ export function Component() {
   )
 }
 
-function BeerIcon(props) {
+function BeerIcon(props:any) {
   return (
     <svg
       {...props}
@@ -243,7 +243,7 @@ function BeerIcon(props) {
 }
 
 
-function CreditCardIcon(props) {
+function CreditCardIcon(props:any) {
   return (
     <svg
       {...props}
@@ -264,7 +264,7 @@ function CreditCardIcon(props) {
 }
 
 
-function DollarSignIcon(props) {
+function DollarSignIcon(props:any) {
   return (
     <svg
       {...props}
@@ -285,7 +285,7 @@ function DollarSignIcon(props) {
 }
 
 
-function LayoutDashboardIcon(props) {
+function LayoutDashboardIcon(props:any) {
   return (
     <svg
       {...props}
@@ -308,7 +308,7 @@ function LayoutDashboardIcon(props) {
 }
 
 
-function LineChartIcon(props) {
+function LineChartIcon(props:any) {
   return (
     <svg
       {...props}
@@ -329,7 +329,7 @@ function LineChartIcon(props) {
 }
 
 
-function MoveHorizontalIcon(props) {
+function MoveHorizontalIcon(props:any) {
   return (
     <svg
       {...props}
@@ -351,7 +351,7 @@ function MoveHorizontalIcon(props) {
 }
 
 
-function ShoppingCartIcon(props) {
+function ShoppingCartIcon(props:any) {
   return (
     <svg
       {...props}
@@ -373,7 +373,7 @@ function ShoppingCartIcon(props) {
 }
 
 
-function UsersIcon(props) {
+function UsersIcon(props:any) {
   return (
     <svg
       {...props}

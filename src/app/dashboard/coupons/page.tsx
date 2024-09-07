@@ -77,6 +77,7 @@ const CouponsPage = () => {
       setCoupons(response.data.coupons);
     } catch (error) {
       console.error("Error al obtener los cupones:", error);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -84,6 +85,7 @@ const CouponsPage = () => {
         life: 3000,
       });
     }
+  }
   };
 
   useEffect(() => {
@@ -92,60 +94,61 @@ const CouponsPage = () => {
 
   const validateCoupon = (coupon: NewCoupon): boolean => {
     if (!coupon.title.trim()) {
+      if(toast && toast.current){
       toast.current.show({
         severity: "warn",
         summary: "Advertencia",
         detail: "El título no puede estar vacío",
         life: 3000,
       });
+    }
       return false;
     }
     if (!coupon.code.trim()) {
+      if(toast && toast.current){
       toast.current.show({
         severity: "warn",
         summary: "Advertencia",
         detail: "El código no puede estar vacío",
         life: 3000,
       });
+    }
       return false;
     }
     if (
       coupon.discountType === "percentage" &&
       (coupon.discountValue <= 0 || coupon.discountValue > 100)
     ) {
+      if(toast && toast.current){
       toast.current.show({
         severity: "warn",
         summary: "Advertencia",
         detail: "El porcentaje de descuento debe estar entre 1 y 100",
         life: 3000,
       });
-      return false;
     }
-    if (coupon.discountType === "amount" && coupon.discountValue <= 0) {
-      toast.current.show({
-        severity: "warn",
-        summary: "Advertencia",
-        detail: "El monto del descuento debe ser mayor a 0",
-        life: 3000,
-      });
       return false;
     }
     if (!coupon.expiryDate) {
+      if(toast && toast.current){
       toast.current.show({
         severity: "warn",
         summary: "Advertencia",
         detail: "La fecha de expiración no puede estar vacía",
         life: 3000,
       });
+    }
       return false;
     }
     if (coupon.usageLimit < 0) {
+      if(toast && toast.current){
       toast.current.show({
         severity: "warn",
         summary: "Advertencia",
         detail: "El límite de uso no puede ser negativo",
         life: 3000,
       });
+    }
       return false;
     }
     return true;
@@ -188,14 +191,17 @@ const CouponsPage = () => {
         expiryDate: "",
         usageLimit: 1,
       });
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "Cupón creado con éxito",
         life: 3000,
       });
+    }
     } catch (error) {
       console.error("Error al crear el cupón:", error);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -203,45 +209,62 @@ const CouponsPage = () => {
         life: 3000,
       });
     }
-  };
-
-  const handleEditCoupon = async () => {
-    if (!validateCoupon(editingCoupon as NewCoupon)) return;
-
-    try {
-      const token = await _retrieveData({ key: "token" });
-      const response = await axios.patch(
-        `${SERVER_URI}/coupons/${editingCoupon?._id}`,
-        editingCoupon,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCoupons(
-        coupons.map((c) =>
-          c._id === editingCoupon?._id ? response.data.coupon : c
-        )
-      );
-      setEditingCoupon(null);
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "Cupón actualizado con éxito",
-        life: 3000,
-      });
-    } catch (error) {
-      console.error("Error al editar el cupón:", error);
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Hubo un error al editar el cupón. Por favor, inténtalo de nuevo.",
-        life: 3000,
-      });
     }
   };
 
+  const handleEditCoupon = async () => {
+    if (!editingCoupon) return;
+
+    // Convertir editingCoupon a NewCoupon
+    const newCoupon: NewCoupon = {
+        title: editingCoupon.title,
+        code: editingCoupon.code,
+        discountType: editingCoupon.discountPercentage > 0 ? "percentage" : "amount",
+        discountValue: editingCoupon.discountPercentage > 0 ? editingCoupon.discountPercentage : editingCoupon.discountAmount,
+        expiryDate: editingCoupon.expiryDate,
+        usageLimit: editingCoupon.usageLimit,
+    };
+
+    // Validar el nuevo cupón
+    if (!validateCoupon(newCoupon)) return;
+
+    try {
+        const token = await _retrieveData({ key: "token" });
+        const response = await axios.patch(
+            `${SERVER_URI}/coupons/${editingCoupon._id}`,
+            editingCoupon,  // Puedes mantener la estructura original aquí si el servidor no requiere cambios
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        setCoupons(
+            coupons.map((c) =>
+                c._id === editingCoupon._id ? response.data.coupon : c
+            )
+        );
+        setEditingCoupon(null);
+        if (toast && toast.current) {
+            toast.current.show({
+                severity: "success",
+                summary: "Éxito",
+                detail: "Cupón actualizado con éxito",
+                life: 3000,
+            });
+        }
+    } catch (error) {
+        console.error("Error al editar el cupón:", error);
+        if (toast && toast.current) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Hubo un error al editar el cupón. Por favor, inténtalo de nuevo.",
+                life: 3000,
+            });
+        }
+    }
+};
   const handleDeleteCoupon = async () => {
     try {
       const token = await _retrieveData({ key: "token" });
@@ -252,14 +275,17 @@ const CouponsPage = () => {
       });
       setCoupons(coupons.filter((c) => c._id !== deletingCoupon?._id));
       setDeletingCoupon(null);
+      if(toast && toast.current){
       toast.current.show({
         severity: "success",
         summary: "Éxito",
         detail: "Cupón eliminado con éxito",
         life: 3000,
       });
+      }
     } catch (error) {
       console.error("Error al eliminar el cupón:", error);
+      if(toast && toast.current){
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -267,10 +293,11 @@ const CouponsPage = () => {
         life: 3000,
       });
     }
+    }
   };
 
   const filteredCoupons = coupons.filter(
-    (coupon) =>
+    (coupon:any) =>
       coupon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       coupon.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -403,7 +430,7 @@ const CouponsPage = () => {
               <select
                 id="discountType"
                 value={newCoupon.discountType}
-                onChange={(e) =>
+                onChange={(e:any) =>
                   setNewCoupon({ ...newCoupon, discountType: e.target.value })
                 }
                 className="col-span-3"
