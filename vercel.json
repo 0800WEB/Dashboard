@@ -1,27 +1,4 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "next.config.js",
-        "use": "@vercel/next"
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "/dashboard/(.*)",
-        "destination": "/dashboard/$1"
-      },
-      {
-        "source": "/api/(.*)",
-        "destination": "/api/$1"
-      }
-    ],
-    "redirects": [
-      {
-        "source": "/old-route",
-        "destination": "/new-route",
-        "permanent": true
-      }
-    ]
-  }
-  
+  "redirects": [],
+  "rewrites": []
+}
