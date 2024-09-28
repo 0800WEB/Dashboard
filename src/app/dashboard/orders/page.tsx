@@ -49,6 +49,7 @@ interface Order {
   status: keyof typeof statusColors;
   createdAt: string;
   deliveryAddress: string;
+  nota?: string;
 }
 
 interface PaginatedOrders {
@@ -70,8 +71,9 @@ const OrdersPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<Order | null>(null); // Estado para el modal de confirmación de eliminación
+  const [expandedNote,setExpandedNote] = useState(false)
   const toast = useToast();
-  
+
   // Controlador para eliminar todas las órdenes
   const handleDeleteAllOrders = async () => {
     try {
@@ -83,55 +85,58 @@ const OrdersPage: React.FC = () => {
       });
 
       setOrders([]);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "Todas las órdenes se eliminaron correctamente",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "success",
+          summary: "Éxito",
+          detail: "Todas las órdenes se eliminaron correctamente",
+          life: 3000,
+        });
+      }
     } catch (err) {
       console.error("Error al eliminar todas las órdenes:", err);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudieron eliminar todas las órdenes",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudieron eliminar todas las órdenes",
+          life: 3000,
+        });
+      }
     } finally {
       setIsDeleteAllModalOpen(false);
     }
   };
-  
+
   const getOrders = async (page = 1) => {
     try {
       const token = await _retrieveData({ key: "token" });
-      const response = await axios.get<PaginatedOrders>(`${SERVER_URI}/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          page: page,
-          limit: 10,
-        },
-      });
+      const response = await axios.get<PaginatedOrders>(
+        `${SERVER_URI}/orders`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            page: page,
+            limit: 10,
+          },
+        }
+      );
 
       setOrders(response.data.orders);
       setCurrentPage(page);
       setTotalPages(Math.ceil(response.data.totalOrders / 10));
     } catch (err) {
       console.error("Error al obtener órdenes:", err);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudo obtener las órdenes",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo obtener las órdenes",
+          life: 3000,
+        });
+      }
     }
   };
 
@@ -139,7 +144,10 @@ const OrdersPage: React.FC = () => {
     getOrders();
   }, []);
 
-  const handleStatusChange = async (orderId: string, newStatus: keyof typeof statusColors) => {
+  const handleStatusChange = async (
+    orderId: string,
+    newStatus: keyof typeof statusColors
+  ) => {
     try {
       const token = await _retrieveData({ key: "token" });
       await axios.patch(
@@ -157,24 +165,24 @@ const OrdersPage: React.FC = () => {
           order._id === orderId ? { ...order, status: newStatus } : order
         )
       );
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "El estado de la orden se actualizó correctamente",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "success",
+          summary: "Éxito",
+          detail: "El estado de la orden se actualizó correctamente",
+          life: 3000,
+        });
+      }
     } catch (err) {
       console.error("Error al actualizar el estado de la orden:", err);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudo actualizar el estado de la orden",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo actualizar el estado de la orden",
+          life: 3000,
+        });
+      }
     }
   };
 
@@ -190,26 +198,28 @@ const OrdersPage: React.FC = () => {
         },
       });
 
-      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderToDelete._id));
+      setOrders((prevOrders) =>
+        prevOrders.filter((order) => order._id !== orderToDelete._id)
+      );
       setOrderToDelete(null); // Cerrar el modal
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "La orden se eliminó correctamente",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "success",
+          summary: "Éxito",
+          detail: "La orden se eliminó correctamente",
+          life: 3000,
+        });
+      }
     } catch (err) {
       console.error("Error al eliminar la orden:", err);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudo eliminar la orden",
-        life: 3000,
-      });
-    }
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo eliminar la orden",
+          life: 3000,
+        });
+      }
     }
   };
 
@@ -233,20 +243,29 @@ const OrdersPage: React.FC = () => {
           <h1 className="text-3xl font-bold">Órdenes</h1>
           <p className="text-gray-600">Administra tus órdenes</p>
         </div>
-        <Button variant="destructive" onClick={() => setIsDeleteAllModalOpen(true)}>
+        <Button
+          variant="destructive"
+          onClick={() => setIsDeleteAllModalOpen(true)}
+        >
           Eliminar Todas las Órdenes
         </Button>
       </header>
 
       {/* Modal de Confirmación para Eliminar Todas las Órdenes */}
-      <Dialog open={isDeleteAllModalOpen} onOpenChange={setIsDeleteAllModalOpen}>
+      <Dialog
+        open={isDeleteAllModalOpen}
+        onOpenChange={setIsDeleteAllModalOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>¿Estás seguro?</DialogTitle>
           </DialogHeader>
           <p>Esta acción eliminará todas las órdenes. No se puede deshacer.</p>
           <div className="flex justify-end gap-4 mt-4">
-            <Button variant="outline" onClick={() => setIsDeleteAllModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteAllModalOpen(false)}
+            >
               Cancelar
             </Button>
             <Button variant="destructive" onClick={handleDeleteAllOrders}>
@@ -257,12 +276,18 @@ const OrdersPage: React.FC = () => {
       </Dialog>
 
       {/* Modal de Confirmación para Eliminar una Orden */}
-      <Dialog open={!!orderToDelete} onOpenChange={() => setOrderToDelete(null)}>
+      <Dialog
+        open={!!orderToDelete}
+        onOpenChange={() => setOrderToDelete(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>¿Estás seguro?</DialogTitle>
           </DialogHeader>
-          <p>Esta acción eliminará la orden <strong>{orderToDelete?.user?.name}</strong>. No se puede deshacer.</p>
+          <p>
+            Esta acción eliminará la orden{" "}
+            <strong>{orderToDelete?.user?.name}</strong>. No se puede deshacer.
+          </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOrderToDelete(null)}>
               Cancelar
@@ -278,7 +303,9 @@ const OrdersPage: React.FC = () => {
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>Lista de Órdenes</CardTitle>
-          <CardDescription>Administra y ve detalles de tus clientes</CardDescription>
+          <CardDescription>
+            Administra y ve detalles de tus clientes
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -298,27 +325,41 @@ const OrdersPage: React.FC = () => {
                 {orders.map((order) => (
                   <tr key={order._id} className="border-b">
                     <td className="py-4">{order._id}</td>
-                    <td className="py-4">{order.user?.name || "Usuario no encontrado"}</td>
                     <td className="py-4">
-                      {order.products.length} {order.products.length === 1 ? "artículo" : "artículos"}
+                      {order.user?.name || "Usuario no encontrado"}
+                    </td>
+                    <td className="py-4">
+                      {order.products.length}{" "}
+                      {order.products.length === 1 ? "artículo" : "artículos"}
                     </td>
                     <td className="py-4">${order.totalPrice.toFixed(2)}</td>
                     <td className="py-4">
-                      {new Date(order.createdAt).toLocaleDateString("es-MX", { timeZone: "UTC" })}
+                      {new Date(order.createdAt).toLocaleDateString("es-MX", {
+                        timeZone: "UTC",
+                      })}
                     </td>
                     <td className="py-4">
                       <Select
                         onValueChange={(value) =>
-                          handleStatusChange(order._id, value as keyof typeof statusColors)
+                          handleStatusChange(
+                            order._id,
+                            value as keyof typeof statusColors
+                          )
                         }
                         defaultValue={order.status}
                       >
-                        <SelectTrigger className={`w-[150px] ${statusColors[order.status]}`}>
+                        <SelectTrigger
+                          className={`w-[150px] ${statusColors[order.status]}`}
+                        >
                           <SelectValue placeholder="Estado" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.keys(statusColors).map((status) => (
-                            <SelectItem key={status} value={status} className="bg-red-600">
+                            <SelectItem
+                              key={status}
+                              value={status}
+                              className="bg-red-600"
+                            >
                               {status}
                             </SelectItem>
                           ))}
@@ -344,7 +385,9 @@ const OrdersPage: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Cliente:</span>
-                              <span className="col-span-3">{order.user.name}</span>
+                              <span className="col-span-3">
+                                {order.user.name}
+                              </span>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Productos:</span>
@@ -359,15 +402,47 @@ const OrdersPage: React.FC = () => {
                               </span>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Nota:</span>
+                              <div className="col-span-3">
+                                {" "}
+                                {/* Agregamos un div contenedor */}
+                                {expandedNote ? ( // Mostrar la nota completa si expandedNote es true
+                                  <span>{order.nota}</span>
+                                ) : (
+                                  <span>
+                                    {order.nota?.length > 50 ? ( // Mostrar un resumen si la nota es larga
+                                      <>
+                                        {order.nota.substring(0, 50)}...{" "}
+                                        <Button
+                                          variant="link"
+                                          size="sm"
+                                          onClick={() => setExpandedNote(true)}
+                                        >
+                                          Ver más
+                                        </Button>
+                                      </>
+                                    ) : (
+                                      order.nota || "Sin nota"
+                                    )}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Total:</span>
-                              <span className="col-span-3">${order.totalPrice.toFixed(2)}</span>
+                              <span className="col-span-3">
+                                ${order.totalPrice.toFixed(2)}
+                              </span>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Fecha:</span>
                               <span className="col-span-3">
-                                {new Date(order.createdAt).toLocaleDateString("es-MX", {
-                                  timeZone: "UTC",
-                                })}
+                                {new Date(order.createdAt).toLocaleDateString(
+                                  "es-MX",
+                                  {
+                                    timeZone: "UTC",
+                                  }
+                                )}
                               </span>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
@@ -376,7 +451,9 @@ const OrdersPage: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Dirección:</span>
-                              <span className="col-span-3">{order.deliveryAddress}</span>
+                              <span className="col-span-3">
+                                {order.deliveryAddress}
+                              </span>
                             </div>
                           </div>
                         </DialogContent>
@@ -402,7 +479,10 @@ const OrdersPage: React.FC = () => {
               <span>
                 Página {currentPage} de {totalPages}
               </span>
-              <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+              <Button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
                 Siguiente
               </Button>
             </div>

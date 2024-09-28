@@ -50,6 +50,7 @@ interface Order {
   status: keyof typeof statusColors;
   createdAt: string;
   deliveryAddress: string;
+  nota?: string;
 }
 
 interface DashboardStats {
@@ -73,6 +74,7 @@ export default function Dashboard() {
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
+  const [expandedNote,setExpandedNote] = useState(false)
   
   const toast = useToast();
 
@@ -347,6 +349,33 @@ export default function Dashboard() {
                                   .map((product) => product.product.name)
                                   .join(", ")}
                               </span>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <span className="font-bold">Nota:</span>
+                              <div className="col-span-3">
+                                {" "}
+                                {/* Agregamos un div contenedor */}
+                                {expandedNote ? ( // Mostrar la nota completa si expandedNote es true
+                                  <span>{order.nota}</span>
+                                ) : (
+                                  <span>
+                                    {order.nota?.length > 50 ? ( // Mostrar un resumen si la nota es larga
+                                      <>
+                                        {order.nota.substring(0, 50)}...{" "}
+                                        <Button
+                                          variant="link"
+                                          size="sm"
+                                          onClick={() => setExpandedNote(true)}
+                                        >
+                                          Ver más
+                                        </Button>
+                                      </>
+                                    ) : (
+                                      order.nota || "Sin nota"
+                                    )}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Total:</span>
