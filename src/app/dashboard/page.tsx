@@ -359,7 +359,7 @@ export default function Dashboard() {
                                   <span>{order?.nota}</span>
                                 ) : (
                                   <span>
-                                    {order?.nota?.length > 50 ? ( // Mostrar un resumen si la nota es larga
+                                    {order?.nota && order?.nota?.length > 50 ? ( // Mostrar un resumen si la nota es larga
                                       <>
                                         {order?.nota.substring(0, 50)}...{" "}
                                         <Button
