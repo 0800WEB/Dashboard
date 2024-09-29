@@ -356,12 +356,12 @@ export default function Dashboard() {
                                 {" "}
                                 {/* Agregamos un div contenedor */}
                                 {expandedNote ? ( // Mostrar la nota completa si expandedNote es true
-                                  <span>{order.nota}</span>
+                                  <span>{order?.nota}</span>
                                 ) : (
                                   <span>
-                                    {order.nota?.length > 50 ? ( // Mostrar un resumen si la nota es larga
+                                    {order?.nota?.length > 50 ? ( // Mostrar un resumen si la nota es larga
                                       <>
-                                        {order.nota.substring(0, 50)}...{" "}
+                                        {order?.nota.substring(0, 50)}...{" "}
                                         <Button
                                           variant="link"
                                           size="sm"
@@ -371,7 +371,7 @@ export default function Dashboard() {
                                         </Button>
                                       </>
                                     ) : (
-                                      order.nota || "Sin nota"
+                                      order?.nota || "Sin nota"
                                     )}
                                   </span>
                                 )}
