@@ -290,9 +290,8 @@ export default function Dashboard() {
                     <td className="py-4">{order._id}</td>
                     <td className="py-4">{order.user.name}</td>
                     <td className="py-4">
-                      {order.products
-                        .map((product) => product.product.name)
-                        .join(", ")}
+                    {order.products.length}{" "}
+                    {order.products.length === 1 ? "artículo" : "artículos"}
                     </td>
                     <td className="py-4">${order.totalPrice.toFixed(2)}</td>
                     <td className="py-4">
@@ -345,9 +344,13 @@ export default function Dashboard() {
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Productos:</span>
                               <span className="col-span-3">
-                                {order.products
-                                  .map((product) => product.product.name)
-                                  .join(", ")}
+                              {order.products.map((item) => (
+                                  <div key={item._id}>
+                                    {item.product
+                                      ? `${item.product.name} (Cant: ${item.quantity})`
+                                      : "Producto no encontrado"}
+                                  </div>
+                                ))}
                               </span>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">

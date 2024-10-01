@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Inter } from "next/font/google";
 import { ToastProvider } from "../ToastContext";
 import Image from 'next/image'
+import { ImagePlus } from "lucide-react"
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -257,6 +258,17 @@ export default function RootLayout({
               >
                 Categorias
               </Link>
+       {/*        <Link
+                href="/dashboard/banners"
+                className={`${
+                  isActive("/dashboard/banners")
+                    ? "font-bold text-foreground"
+                    : "text-muted-foreground"
+                } hover:text-foreground`}
+                prefetch={false}
+              >
+                Banners
+              </Link> */}
             </nav>
             <div className="relative">
               <Button
@@ -370,6 +382,18 @@ export default function RootLayout({
                   <TagIcon className="h-5 w-5" />
                   Categorias
                 </Link>
+                {/* <Link
+                  href="/dashboard/banners"
+                  className={`flex items-center gap-2 ${
+                    isActive("/dashboard/banners")
+                      ? "font-bold text-foreground"
+                      : "text-muted-foreground"
+                  } hover:text-foreground`}
+                  prefetch={false}
+                >
+                  <ImagePlus className="h-5 w-5" />
+                  Banners
+                </Link> */}
               </nav>
             </aside>
             {children}
