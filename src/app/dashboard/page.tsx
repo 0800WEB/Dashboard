@@ -344,8 +344,8 @@ export default function Dashboard() {
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Productos:</span>
                               <span className="col-span-3">
-                              {order.products.map((item) => (
-                                  <div key={item._id}>
+                              {order.products.map((item, index) => (
+                                  <div key={index}>
                                     {item.product
                                       ? `${item.product.name} (Cant: ${item.quantity})`
                                       : "Producto no encontrado"}
