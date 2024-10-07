@@ -38,7 +38,13 @@ interface Product {
   };
   quantity: number;
 }
-
+interface Coupon {
+  _id: string;
+  title: string;
+  code: string;
+  discountPercentage?: number;
+  discountAmount?: number;
+}
 interface Order {
   _id: string;
   user: {
@@ -50,6 +56,7 @@ interface Order {
   createdAt: string;
   deliveryAddress: string;
   nota?: string;
+  coupon?: Coupon; // Cupón agregado como opcional
 }
 
 interface PaginatedOrders {
@@ -71,7 +78,7 @@ const OrdersPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<Order | null>(null); // Estado para el modal de confirmación de eliminación
-  const [expandedNote,setExpandedNote] = useState(false)
+  const [expandedNote, setExpandedNote] = useState(false);
   const toast = useToast();
 
   // Controlador para eliminar todas las órdenes
@@ -401,6 +408,23 @@ const OrdersPage: React.FC = () => {
                                 ))}
                               </span>
                             </div>
+                            {order?.coupon &&
+                              (order?.coupon?.discountPercentage && order?.coupon?.discountPercentage > 0 ||
+                                order?.coupon?.discountAmount && order?.coupon?.discountAmount > 0) && (
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                  <span className="font-bold">Cupón:</span>
+
+                                  {/* Verificamos qué tipo de descuento tiene el cupón */}
+                                  <span className="col-span-3">
+                                    {order?.coupon?.discountPercentage && order?.coupon?.discountPercentage > 0
+                                      ? `Descuento del ${order?.coupon?.discountPercentage}% codigo "${order?.coupon?.code}"`
+                                      : `Descuento de $${order?.coupon?.discountAmount?.toFixed(
+                                          2
+                                        )}`}
+                                  </span>
+                                </div>
+                              )}
+
                             <div className="grid grid-cols-4 items-center gap-4">
                               <span className="font-bold">Nota:</span>
                               <div className="col-span-3">
