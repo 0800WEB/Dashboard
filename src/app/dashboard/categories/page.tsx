@@ -234,7 +234,7 @@ export default function Categories() {
                 <TableCell className="font-medium">{category.name}</TableCell>
                 <TableCell>{category.description}</TableCell>
                 <TableCell>
-                  <Image
+                  <img  
                     width={20}
                     height={20}
                     src={

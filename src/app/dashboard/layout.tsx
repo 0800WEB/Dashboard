@@ -382,7 +382,7 @@ export default function RootLayout({
                   <TagIcon className="h-5 w-5" />
                   Categorias
                 </Link>
-                {/* <Link
+                <Link
                   href="/dashboard/banners"
                   className={`flex items-center gap-2 ${
                     isActive("/dashboard/banners")
@@ -393,7 +393,7 @@ export default function RootLayout({
                 >
                   <ImagePlus className="h-5 w-5" />
                   Banners
-                </Link> */}
+                </Link>
               </nav>
             </aside>
             {children}

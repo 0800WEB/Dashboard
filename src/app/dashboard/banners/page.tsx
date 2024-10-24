@@ -1,20 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Bell,
-  Coffee,
-  Gift,
-  Home,
-  Package,
-  Search,
-  ShoppingCart,
-  Users,
-  Filter,
-  Plus,
-  Trash2,
-  Edit,
-} from "lucide-react";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -30,157 +17,162 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SERVER_URI, _retrieveData } from "@/lib/utils";
 import axios from "axios";
 import { useToast } from "@/app/ToastContext";
-import { Category, NewCategory } from "./interfaces";
 import Image from "next/image";
-export default function Categories() {
-  const [categories, setCategories] = useState<Category[]>([]);
+
+interface Banner {
+  _id: string;
+  name: string;
+  image: string;
+}
+
+interface NewBanner {
+  name: string;
+  image: string;
+}
+
+export default function Banners() {
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [deletingCategory, setDeletingCategory] = useState<Category | null>(
-    null
-  );
-  const [newCategory, setNewCategory] = useState<NewCategory>({
+  const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
+  const [deletingBanner, setDeletingBanner] = useState<Banner | null>(null);
+  const [newBanner, setNewBanner] = useState<NewBanner>({
     name: "",
-    description: "",
     image: "",
   });
-  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [isAddBannerDialogOpen, setIsAddBannerDialogOpen] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
-    fetchCategories();
+    fetchBanners();
   }, []);
 
-  const fetchCategories = async () => {
+  const fetchBanners = async () => {
     try {
-      const response = await axios.get<Category[]>(`${SERVER_URI}/categories`);
-      setCategories(response.data);
+      const response = await axios.get<Banner[]>(`${SERVER_URI}/banners`);
+      setBanners(response.data);
     } catch (error) {
-      console.error("Error al obtener las categorías:", error);
+      console.error("Error al obtener los banners:", error);
     }
   };
 
-  const handleAddCategory = async () => {
-    console.log(newCategory);
+  const handleAddBanner = async () => {
     try {
       const token = await _retrieveData({ key: "token" });
-      const response = await axios.post<{ category: Category }>(
-        `${SERVER_URI}/categories`,
-        newCategory,
+      const response = await axios.post<{ banner: Banner }>(
+        `${SERVER_URI}/banners`,
+        newBanner,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      setCategories([...categories, response.data.category]);
-      setNewCategory({ name: "", description: "", image: "" });
-      setIsAddCategoryDialogOpen(false);
+      setBanners([...banners, response.data.banner]);
+      setNewBanner({ name: "", image: "" });
+      setIsAddBannerDialogOpen(false);
       if (toast && toast.current) {
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "Categoría creada con éxito.",
-        life: 3000,
-      });
-    }
+        toast.current.show({
+          severity: "success",
+          summary: "Éxito",
+          detail: "Banner creado con éxito.",
+          life: 3000,
+        });
+      }
     } catch (error) {
-      console.error("Error al crear la categoría:", error);
+      console.error("Error al crear el banner:", error);
       if (toast && toast.current) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudo crear la categoría. Intente nuevamente.",
-        life: 3000,
-      });
-    }
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo crear el banner. Intente nuevamente.",
+          life: 3000,
+        });
+      }
     }
   };
 
-  const handleEditCategory = async () => {
+  const handleEditBanner = async () => {
     try {
-      if (editingCategory) {
+      if (editingBanner) {
         const token = await _retrieveData({ key: "token" });
-        const response = await axios.put<{ category: Category }>(
-          `${SERVER_URI}/categories/${editingCategory._id}`,
-          editingCategory,
+        console.log(token)
+        const response = await axios.put<{ banner: Banner }>(
+          `${SERVER_URI}/banners/${editingBanner._id}`,
+          editingBanner,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setCategories(
-          categories.map((c) =>
-            c._id === editingCategory._id ? response.data.category : c
+        setBanners(
+          banners.map((b) =>
+            b._id === editingBanner._id ? response.data.banner : b
           )
         );
-        setEditingCategory(null);
-        if(toast && toast.current){
+        setEditingBanner(null);
+        if (toast && toast.current) {
           toast.current.show({
             severity: "success",
             summary: "Éxito",
-            detail: "Categoría actualizada con éxito.",
+            detail: "Banner actualizado con éxito.",
             life: 3000,
           });
         }
       }
     } catch (error) {
-      console.error("Error al actualizar la categoría:", error);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudo actualizar la categoría. Intente nuevamente.",
-        life: 3000,
-      });
-    }
+      console.error("Error al actualizar el banner:", error);
+      if (toast && toast.current) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo actualizar el banner. Intente nuevamente.",
+          life: 3000,
+        });
+      }
     }
   };
 
-  const handleDeleteCategory = async () => {
+  const handleDeleteBanner = async () => {
     try {
-      if (deletingCategory) {
+      if (deletingBanner) {
         const token = await _retrieveData({ key: "token" });
-        await axios.delete(`${SERVER_URI}/categories/${deletingCategory._id}`, {
+        await axios.delete(`${SERVER_URI}/banners/${deletingBanner._id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setCategories(categories.filter((c) => c._id !== deletingCategory._id));
-        setDeletingCategory(null);
-      if(toast && toast.current){
+        setBanners(banners.filter((b) => b._id !== deletingBanner._id));
+        setDeletingBanner(null);
+        if (toast && toast.current) {
+          toast.current.show({
+            severity: "success",
+            summary: "Éxito",
+            detail: "Banner eliminado con éxito.",
+            life: 3000,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error al eliminar el banner:", error);
+      if (toast && toast.current) {
         toast.current.show({
-          severity: "success",
-          summary: "Éxito",
-          detail: "Categoría eliminada con éxito.",
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo eliminar el banner. Intente nuevamente.",
           life: 3000,
         });
       }
-      }
-    } catch (error) {
-      console.error("Error al eliminar la categoría:", error);
-      if(toast && toast.current){
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "No se pudo eliminar la categoría. Intente nuevamente.",
-        life: 3000,
-      });
     }
-  }
   };
 
-  const filteredCategories = categories.filter(
-    (category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredBanners = banners.filter((banner) =>
+    banner.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -188,24 +180,24 @@ export default function Categories() {
       {/* Header */}
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Categorías</h1>
-          <p className="text-gray-600">Administra tus categorías</p>
+          <h1 className="text-3xl font-bold">Banners</h1>
+          <p className="text-gray-600">Administra tus banners promocionales</p>
         </div>
       </header>
 
-      {/* Search and Filter */}
+      {/* Search and Add */}
       <div className="mb-6 flex items-center space-x-4">
         <Button
           variant="outline"
-          onClick={() => setIsAddCategoryDialogOpen(true)}
+          onClick={() => setIsAddBannerDialogOpen(true)}
         >
           <Plus className="mr-2 h-4 w-4" />
-          Añadir Categoría
+          Añadir Banner
         </Button>
         <div className="relative flex-grow">
           <Input
             type="text"
-            placeholder="Buscar categorías..."
+            placeholder="Buscar banners..."
             className="pl-10 pr-4 rounded-full bg-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -214,7 +206,7 @@ export default function Categories() {
         </div>
       </div>
 
-      {/* Categories Table */}
+      {/* Banners Table */}
       <div
         className="rounded-lg border shadow bg-white flex-1"
         style={{ backgroundColor: "#fff" }}
@@ -223,34 +215,29 @@ export default function Categories() {
           <TableHeader>
             <TableRow>
               <TableHead>Nombre</TableHead>
-              <TableHead>Descripción</TableHead>
               <TableHead>Imagen</TableHead>
               <TableHead>Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredCategories.map((category) => (
-              <TableRow key={category._id}>
-                <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell>{category.description}</TableCell>
+            {filteredBanners.map((banner) => (
+              <TableRow key={banner._id}>
+                <TableCell className="font-medium">{banner.name}</TableCell>
                 <TableCell>
-                  <Image
-                    width={20}
-                    height={20}
-                    src={
-                      category.image && category.image.includes("https")
-                        ? category.image
-                        : "/logo.png" // Fallback si la URL es incorrecta o falta
-                    }
-                    alt={category.name}
-                    className="h-10 w-10 object-cover"
-                  />
+                <img
+  src={banner.image}
+  alt={banner.name}
+  width={200}
+  height={100}
+  className="h-20 w-40 object-cover"
+/>
+
                 </TableCell>
                 <TableCell className="flex gap-4">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setEditingCategory(category)}
+                    onClick={() => setEditingBanner(banner)}
                   >
                     <Edit className="mr-2 h-4 w-4" />
                     Editar
@@ -258,7 +245,7 @@ export default function Categories() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => setDeletingCategory(category)}
+                    onClick={() => setDeletingBanner(banner)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Eliminar
@@ -270,14 +257,14 @@ export default function Categories() {
         </Table>
       </div>
 
-      {/* Create Category Modal */}
+      {/* Create Banner Modal */}
       <Dialog
-        open={isAddCategoryDialogOpen}
-        onOpenChange={setIsAddCategoryDialogOpen}
+        open={isAddBannerDialogOpen}
+        onOpenChange={setIsAddBannerDialogOpen}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Añadir Categoría</DialogTitle>
+            <DialogTitle>Añadir Banner</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -286,25 +273,9 @@ export default function Categories() {
               </Label>
               <Input
                 id="name"
-                value={newCategory.name}
+                value={newBanner.name}
                 onChange={(e) =>
-                  setNewCategory({ ...newCategory, name: e.target.value })
-                }
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Descripción
-              </Label>
-              <Input
-                id="description"
-                value={newCategory.description}
-                onChange={(e) =>
-                  setNewCategory({
-                    ...newCategory,
-                    description: e.target.value,
-                  })
+                  setNewBanner({ ...newBanner, name: e.target.value })
                 }
                 className="col-span-3"
               />
@@ -315,29 +286,29 @@ export default function Categories() {
               </Label>
               <Input
                 id="image"
-                value={newCategory.image}
+                value={newBanner.image}
                 onChange={(e) =>
-                  setNewCategory({ ...newCategory, image: e.target.value })
+                  setNewBanner({ ...newBanner, image: e.target.value })
                 }
                 className="col-span-3"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleAddCategory}>Crear Categoría</Button>
+            <Button onClick={handleAddBanner}>Crear Banner</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Category Modal */}
-      {editingCategory && (
+      {/* Edit Banner Modal */}
+      {editingBanner && (
         <Dialog
-          open={!!editingCategory}
-          onOpenChange={() => setEditingCategory(null)}
+          open={!!editingBanner}
+          onOpenChange={() => setEditingBanner(null)}
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Editar Categoría</DialogTitle>
+              <DialogTitle>Editar Banner</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
@@ -346,27 +317,11 @@ export default function Categories() {
                 </Label>
                 <Input
                   id="edit-name"
-                  value={editingCategory.name}
+                  value={editingBanner.name}
                   onChange={(e) =>
-                    setEditingCategory({
-                      ...editingCategory,
+                    setEditingBanner({
+                      ...editingBanner,
                       name: e.target.value,
-                    })
-                  }
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-description" className="text-right">
-                  Descripción
-                </Label>
-                <Input
-                  id="edit-description"
-                  value={editingCategory.description}
-                  onChange={(e) =>
-                    setEditingCategory({
-                      ...editingCategory,
-                      description: e.target.value,
                     })
                   }
                   className="col-span-3"
@@ -378,10 +333,10 @@ export default function Categories() {
                 </Label>
                 <Input
                   id="edit-image"
-                  value={editingCategory.image}
+                  value={editingBanner.image}
                   onChange={(e) =>
-                    setEditingCategory({
-                      ...editingCategory,
+                    setEditingBanner({
+                      ...editingBanner,
                       image: e.target.value,
                     })
                   }
@@ -390,35 +345,34 @@ export default function Categories() {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleEditCategory}>Guardar Cambios</Button>
+              <Button onClick={handleEditBanner}>Guardar Cambios</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       )}
 
       {/* Delete Confirmation Modal */}
-      {deletingCategory && (
+      {deletingBanner && (
         <Dialog
-          open={!!deletingCategory}
-          onOpenChange={() => setDeletingCategory(null)}
+          open={!!deletingBanner}
+          onOpenChange={() => setDeletingBanner(null)}
         >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
               <p>
-                ¿Estás seguro de que deseas eliminar la categoría &quot;
-                {deletingCategory.name}&quot;? Esta acción no se puede
-                deshacer.
+                ¿Estás seguro de que deseas eliminar el banner &quot;
+                {deletingBanner.name}&quot;? Esta acción no se puede deshacer.
               </p>
             </DialogHeader>
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setDeletingCategory(null)}
+                onClick={() => setDeletingBanner(null)}
               >
                 Cancelar
               </Button>
-              <Button variant="destructive" onClick={handleDeleteCategory}>
+              <Button variant="destructive" onClick={handleDeleteBanner}>
                 Eliminar
               </Button>
             </DialogFooter>
